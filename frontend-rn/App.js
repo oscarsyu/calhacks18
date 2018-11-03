@@ -1,35 +1,33 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 
-import { ENDPOINT_BASE } from './constants.js';
-import Playlist from './Playlist.js';
+import MoodPickerTab from './MoodPickerTab.js';
+
+const TABS = {
+  MOOD_PICKER: 'mood-picker',
+};
 
 export default class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      playlist: [],
+      tab: TABS.MOOD_PICKER,
     };
+  }
+
+  renderTabView() {
+    switch (this.state.tab) {
+      case TABS.MOOD_PICKER: return <MoodPickerTab/>;
+    }
   }
 
   render() {
     return (
       <View style={styles.container}>
         <View style={styles.header}></View>
-        <Playlist styles={styles.playlist} playlist={this.state.playlist}/>
+        {this.renderTabView()}
       </View>
     );
-  }
-
-  componentDidMount() {
-    let mood = "happy";
-    this.fetchPlaylist(mood);
-  }
-
-  async fetchPlaylist(mood) {
-    const response = await fetch(`${ENDPOINT_BASE}/mock/playlists/${mood}`);
-    const playlist = await response.json();
-    this.setState({ playlist });
   }
 }
 
@@ -41,8 +39,5 @@ const styles = StyleSheet.create({
   header: {
     height: 60,
     backgroundColor: 'gray',
-  },
-  playlist: {
-    flex: 1,
   },
 });
