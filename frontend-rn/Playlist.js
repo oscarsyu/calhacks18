@@ -43,10 +43,14 @@ export default class Playlist extends React.Component {
 
 const styles = StyleSheet.create({
     item: {
-        height: 40,
+        height: 48,
+        paddingTop: 8,
+        paddingRight: 12,
+        paddingBottom: 8,
+        paddingLeft: 12,
         flexDirection: 'row',
         alignItems: 'center',
-        borderTopColor: 'lightgray',
         borderTopWidth: 1,
+        borderTopColor: 'lightgray',
     },
 });
