@@ -1,7 +1,8 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import { ENDPOINT_BASE } from './constants.js';
+import Playlist from './Playlist.js';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -14,7 +15,7 @@ export default class App extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text>{this.state.playlist.join("\n")}</Text>
+        <Playlist styles={styles.playlist} playlist={this.state.playlist}/>
       </View>
     );
   }
@@ -27,12 +28,7 @@ export default class App extends React.Component {
   async fetchPlaylist(mood) {
     const response = await fetch(`${ENDPOINT_BASE}/mock/playlists/${mood}`);
     const playlist = await response.json();
-    this.setState((state) => {
-      return {
-        ...state,
-        playlist
-      };
-    });
+    this.setState({ playlist });
   }
 }
 
@@ -40,7 +36,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+  },
+  playlist: {
+    flex: 1,
   },
 });
