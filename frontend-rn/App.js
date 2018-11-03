@@ -15,6 +15,7 @@ export default class App extends React.Component {
   render() {
     return (
       <View style={styles.container}>
+        <View style={styles.header}></View>
         <Playlist styles={styles.playlist} playlist={this.state.playlist}/>
       </View>
     );
@@ -36,6 +37,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+  },
+  header: {
+    height: 60,
+    backgroundColor: 'gray',
   },
   playlist: {
     flex: 1,

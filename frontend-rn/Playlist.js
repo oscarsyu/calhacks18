@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
         height: 40,
         flexDirection: 'row',
         alignItems: 'center',
-        borderTopColor: 'gray',
+        borderTopColor: 'lightgray',
         borderTopWidth: 1,
     },
 });
