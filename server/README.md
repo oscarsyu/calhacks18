@@ -13,3 +13,8 @@ pip install -r requirements.txt
 ```
 heroku local --procfile Procfile.local
 ```
+
+## Some helpful resources
+
+- http://flask.pocoo.org
+- https://devcenter.heroku.com/articles/flask-memcache#create-a-flask-application-for-heroku
