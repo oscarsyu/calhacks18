@@ -1,4 +1,4 @@
-from flask import Blueprint, json
+from flask import Blueprint, json, Response
 
 bp = Blueprint('app', __name__)
 
@@ -27,4 +27,4 @@ def mock_playlist(mood):
         ],
     }
 
-    return json.dumps(mock_playlists[mood] if mood in mock_playlists else [])
+    return Response(json.dumps(mock_playlists[mood] if mood in mock_playlists else []), 'application/json')
