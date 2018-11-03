@@ -1,7 +1,7 @@
 ## Set up
 
 ```
-brew install heroku
+brew install heroku/brew/heroku
 ```
 
 ```
