@@ -1,11 +1,3 @@
-from google.cloud import language
-from google.cloud.language import enums
-from google.cloud.language import types
-
-import six
-
-from thesaurus import Word
-
 import sys
 
 import spotipy
@@ -14,20 +6,6 @@ import spotipy.util as util
 SPOTIPY_CLIENT_ID = "c57ae0a3f9b84353a57b9953201fc9c9"
 SPOTIPY_CLIENT_SECRET = "94eaa60830c444c9a1b177f99b0fec1e"
 SPOTIPY_REDIRECT_URI = "http://localhost:8888/callback"
-
-def mood_dict():
-    """ Gives a dictionary of mood synonyms. """
-    happy_synonyms = Word("happy").synonyms() + ["happy"]
-    sad_synonyms = Word("sad").synonyms() + ["sad"]
-    excited_synonyms = Word("excited").synonyms() + ["excited"]
-    calm_synonyms = Word("calm").synonyms() + ["calm"]
-    moods = {
-        "happy" : happy_synonyms,
-        "sad" : sad_synonyms,
-        "excited" : excited_synonyms,
-        "calm" : calm_synonyms
-    }
-    return moods
 
 def get_all_songs(username, maxi=200):
     scope = 'user-library-read'
@@ -47,6 +25,7 @@ def get_all_songs(username, maxi=200):
 
 def get_audio_features(username, tracks):
     """ Returns audio features. """
+
     scope = 'user-library-read'
     token = util.prompt_for_user_token(username, scope, \
         client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET, \
@@ -60,6 +39,8 @@ def get_audio_features(username, tracks):
     return result
 
 def make_playlist(username, tracks, name):
+    """ Makes playlist given tracks. """
+    
     scope = 'playlist-modify-public'
     token = util.prompt_for_user_token(username, scope, \
         client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET, \
@@ -71,6 +52,8 @@ def make_playlist(username, tracks, name):
     for item in tracks:
         sp.user_playlist_add_tracks(username, playlist["id"], item)  
     print('did it')
+
+
 
 
 def main():
