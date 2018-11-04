@@ -59,7 +59,8 @@ class MoodPickerTab extends React.Component {
                 'Authorization': this.props.userId,
             },
         });
-        await response.json();
+        const message = await response.text();
+        alert(message);
     }
 }
 
@@ -79,7 +80,7 @@ const styles = StyleSheet.create({
     },
     slider: {
         flex: 1,
-    },  
+    },
     playlist: {
         flex: 1,
     },

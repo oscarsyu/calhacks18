@@ -60,7 +60,8 @@ class SentimentTab extends React.Component {
                 'Authorization': this.props.userId,
             },
         });
-        await response.json();
+        const message = await response.text();
+        alert(message);
     }
 }
 

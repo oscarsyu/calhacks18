@@ -64,9 +64,13 @@ def playlist_create_mood():
     playlist = classifier_util.suggest_playlist_from_mood(all_tracks, mood)
 
     if rock:
-        spotify.make_playlist(access_token, playlist, 'mood %s' % mood)
-
-    return dumps_playlist(playlist)
+        current_app.logger.info('Creating playlist')
+        playlist_name = 'mood %s' % mood
+        spotify.make_playlist(access_token, playlist, playlist_name)
+        return 'Yay, the playlist "%s" is created!' % playlist_name
+    else:
+        current_app.logger.info('Outputting playlist')
+        return dumps_playlist(playlist)
 
 
 @bp.route('/playlist/create/text')
@@ -87,9 +91,13 @@ def playlist_create_text():
     playlist = classifier_util.suggest_playlist_from_text(all_tracks, text)
 
     if rock:
-        spotify.make_playlist(access_token, playlist, 'feel %s' % text[:10])
-
-    return dumps_playlist(playlist)
+        current_app.logger.info('Creating playlist')
+        playlist_name = 'feel %s' % text[:10]
+        spotify.make_playlist(access_token, playlist, playlist_name)
+        return 'Yay, the playlist "%s" is created!' % playlist_name
+    else:
+        current_app.logger.info('Outputting playlist')
+        return dumps_playlist(playlist)
 
 
 @bp.route('/spotify/auth')
@@ -151,7 +159,7 @@ function awaitPostMessage() {
 
 window.onload = function () {
     awaitPostMessage();
-    
+
     const USER_ID = '%s';
     document.write('Here is your user id: ' + USER_ID + '<br>');
     window.postMessage(USER_ID);
