@@ -15,7 +15,7 @@ export default class Playlist extends React.Component {
                 data={this.state.items}
                 renderItem={({ item }) =>
                     <View style={styles.item}>
-                        <Text>{item.key}</Text>
+                        <Text>{item.name}</Text>
                     </View>
                 }
             />
@@ -34,7 +34,8 @@ export default class Playlist extends React.Component {
         this.setState({
             items: playlist.map((song) => {
                 return {
-                    key: song
+                    key: song.id,
+                    name: song.name
                 };
             }),
         });

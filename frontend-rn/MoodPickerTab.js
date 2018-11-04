@@ -35,7 +35,7 @@ class MoodPickerTab extends React.Component {
     }
 
     async fetchPlaylist() {
-        const response = await fetch(`${ENDPOINT_BASE}/mock/playlists/${this.state.mood}`, {
+        const response = await fetch(`${ENDPOINT_BASE}/playlist/create`, {
             headers: {
                 'Authorization': this.props.userId,
             },

@@ -1,8 +1,8 @@
 import base64
-import logging
 import os
 import urllib.parse
 import requests
+import spotipy as spotipy
 
 from flask import current_app, json
 
@@ -18,14 +18,12 @@ CLIENT_SECRET = os.environ.get('SPOTIFY_CLIENT_SECRET')
 CLIENT_BEARER = base64.b64encode(("{}:{}".format(CLIENT_ID, CLIENT_SECRET)).encode()).decode()
 
 SCOPE = [
-    'playlist-modify-public'
+    'playlist-modify-public',
+    'user-library-read',
 ]
 
 CALLBACK_URL = BASE_URL + '/spotify/callback'
 AUTH_URL = BASE_URL + '/spotify/auth'
-
-logger = logging.getLogger(__name__)
-
 
 def build_query_params(d):
     return '&'.join('{}={}'.format(k, urllib.parse.quote(v)) for k, v in d.items())
@@ -61,3 +59,27 @@ def authorize(auth_token):
     if 'error' in response_data:
         return None
     return response_data['access_token']
+
+
+def get_all_tracks(token, num_max_tracks=200):
+    sp = spotipy.Spotify(auth=token)
+    offset = 0
+    limit = 20
+    result = []
+    curr = sp.current_user_saved_tracks(limit=min(limit, num_max_tracks - offset), offset=offset)
+    while len([x['track'] for x in curr['items']]) > 0 and len(result) <= num_max_tracks:
+        for item in curr['items']:
+            result.append(item['track'])
+        offset += limit
+        curr = sp.current_user_saved_tracks(offset=offset)
+    return result
+
+
+def get_audio_features(token, tracks):
+    sp = spotipy.Spotify(auth=token)
+    tracks = [t["uri"] for t in tracks]
+    tracks = [tracks[i * 50:(i + 1) * 50] for i in range(len(tracks) // 50 + 1)]
+    result = []
+    for item in tracks:
+        result.extend(sp.audio_features(item))
+    return result

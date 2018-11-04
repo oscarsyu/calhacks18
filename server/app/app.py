@@ -1,8 +1,10 @@
 from logging.config import dictConfig
 
-from flask import Blueprint, json, Response, redirect, request
+import pandas as pd
+from flask import Blueprint, json, Response, redirect, request, current_app
 
 from app import spotify
+from app.base import RELEASE_CHANNEL
 
 dictConfig({
     'version': 1,
@@ -15,17 +17,39 @@ dictConfig({
         'formatter': 'default'
     }},
     'root': {
-        'level': 'INFO',
+        'level': 'DEBUG' if RELEASE_CHANNEL == 'dev' else 'INFO',
         'handlers': ['wsgi']
     }
 })
 
 bp = Blueprint('app', __name__)
 
+def get_access_token():
+    return request.headers.get('Authorization', '')
+
 
 @bp.route('/')
 def index():
     return 'Hey this is working!'
+
+
+@bp.route('/playlist/create')
+def playlist_create():
+    access_token = get_access_token()
+
+    if not access_token:
+        return '{"error":"Not authorized"}', 403
+
+    current_app.logger.info('Getting all tracks')
+    all_tracks = spotify.get_all_tracks(access_token, 20)
+
+    current_app.logger.info('Getting features')
+    all_tracks_features = spotify.get_audio_features(access_token, all_tracks)
+
+    return json.dumps([{
+                          'id': track['id'],
+                          'name': track['name'],
+                      } for track, features in zip(all_tracks, all_tracks_features)])
 
 
 @bp.route('/spotify/auth')
