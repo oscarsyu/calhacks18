@@ -49,7 +49,11 @@ class Main extends React.Component {
             }
         }
 
-        return <WebView {...webViewProps} style={{ width: 0, height: 0, flex: 0 }} />;
+        return (
+            <View style={{ width: 0, height: 0, flex: 0 }}>
+                <WebView {...webViewProps} />
+            </View>
+        );
     }
 
     render() {
