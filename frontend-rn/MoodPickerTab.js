@@ -1,5 +1,5 @@
 import React from 'react';
-import { Picker, StyleSheet, View } from 'react-native';
+import { Picker, StyleSheet, Slider, View } from 'react-native';
 import { connect } from 'react-redux';
 
 import { ENDPOINT_BASE } from './constants.js';
@@ -9,7 +9,7 @@ class MoodPickerTab extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            mood: 'happy',
+            mood: 0,
             playlist: [],
         };
     }
@@ -17,14 +17,14 @@ class MoodPickerTab extends React.Component {
     render() {
         return (
             <View style={styles.container}>
-                <Picker
+                <Slider
                     selectedValue={this.state.mood}
-                    onValueChange={(itemValue, itemIndex) => {
-                        this.setState({ mood: itemValue }, () => this.fetchPlaylist());
-                    }}>
-                    <Picker.Item value='happy' label='Happy mood' />
-                    <Picker.Item value='sad' label='Sad mood' />
-                </Picker>
+                    minimumValue={-1}
+                    maximumValue={1}
+                    onValueChange={(value) => {
+                        this.setState({ mood: value }, () => this.fetchPlaylist());
+                    }}
+                    />
                 <Playlist styles={styles.playlist} playlist={this.state.playlist} />
             </View>
         );
@@ -35,7 +35,9 @@ class MoodPickerTab extends React.Component {
     }
 
     async fetchPlaylist() {
-        const response = await fetch(`${ENDPOINT_BASE}/playlist/create`, {
+        this.setState({ playlist: [] }); // Empty the playlist first
+
+        const response = await fetch(`${ENDPOINT_BASE}/playlist/create?mood=${this.state.mood}`, {
             headers: {
                 'Authorization': this.props.userId,
             },
