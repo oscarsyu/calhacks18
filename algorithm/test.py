@@ -10,10 +10,7 @@ import numpy as np
 client = language.LanguageServiceClient()
 
 # The text to analyze
-text = u'I am feeling super duper sad.  I just want to cry cry cry cry'
-
-# u'I am feeling super duper duper happy!! Lets party'
-# u'I am feeling very very extremely sad.  I just want to cry'
+text =  u'I am feeling very very extremely sad.  I just want to cry'
 text1 = u'I am feeling super duper duper happy!! Lets party'
 document = types.Document(
     content=text,
@@ -25,11 +22,17 @@ sentiment = client.analyze_sentiment(document=document).document_sentiment
 print('Text: {}'.format(text))
 print('Sentiment: {}, {}'.format(sentiment.score, sentiment.magnitude))
 
-mood_score = sentiment.score * 1.5
+if (sentiment.score > 0):
+    mood_score = sentiment.score  * 1.3
+else:
+    mood_score = sentiment.score  * 4
+
 print(mood_score)
 
 with open('lm.pickle', 'rb') as fi:
     lm = pickle.load(fi)
+
+# new_labels = {"tempo": "bpm", "danceability": "dnce", "energy": "nrgy", "loudness": "dB", "liveliness": "live", "duramtion_ms"}
 data = pd.read_csv("test_set.csv")
 
 def prep_data(frame):
@@ -48,7 +51,7 @@ def normalize(col):
 def prep_features(tbl):
     tbl_norm = tbl
     tbl_norm["bpm"] = normalize(tbl_norm["bpm"])
-    tbl_norm["dnce"] = normalize(tbl_norm["dnce"])
+    tbl_norm["nrgy"] = normalize(tbl_norm["nrgy"])
     tbl_norm["dnce"] = normalize(tbl_norm["dnce"])
     tbl_norm["val"] = normalize(tbl_norm["val"])
     tbl_norm["acous"] = normalize(tbl_norm["acous"])
@@ -65,7 +68,7 @@ def predict_songs(tbl):
     predicted = lm.predict(tbl.loc[:, ["bpm", "nrgy", "dnce", "dB", "val", "dur", "acous"]])
     tbl_predicted["mood_predicted"] = predicted
     return tbl_predicted
-test_norm = predict_songs(data)
+predicted = predict_songs(data)
 
 def find_predicted_songs(tbl, score, num_songs):
     songs = num_songs
@@ -77,5 +80,5 @@ def find_predicted_songs(tbl, score, num_songs):
     sort_by_dist = in_range.sort_values("dists")
 
     return sort_by_dist[:num_songs]
-playlist = find_predicted_songs(test_norm, mood_score, 25)
+playlist = find_predicted_songs(predicted, mood_score, 25)
 print(playlist)
