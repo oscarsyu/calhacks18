@@ -1,10 +1,11 @@
 import React from 'react';
 import { Picker, StyleSheet, View } from 'react-native';
+import { connect } from 'react-redux';
 
 import { ENDPOINT_BASE } from './constants.js';
 import Playlist from './Playlist.js';
 
-export default class MoodPickerTab extends React.Component {
+class MoodPickerTab extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -34,7 +35,11 @@ export default class MoodPickerTab extends React.Component {
     }
 
     async fetchPlaylist() {
-        const response = await fetch(`${ENDPOINT_BASE}/mock/playlists/${this.state.mood}`);
+        const response = await fetch(`${ENDPOINT_BASE}/mock/playlists/${this.state.mood}`, {
+            headers: {
+                'Authorization': this.props.userId,
+            },
+        });
         const playlist = await response.json();
         this.setState({ playlist });
     }
@@ -48,3 +53,15 @@ const styles = StyleSheet.create({
         flex: 1,
     },
 });
+
+const mapStateToProps = (state) => {
+    return {
+        userId: state.userId
+    };
+};
+
+const mapDispatchToProps = (dispatch) => {
+    return {};
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(MoodPickerTab);
