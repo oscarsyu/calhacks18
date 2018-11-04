@@ -39,7 +39,6 @@ def mood_checker(text):
 				return mood;
 
 def main():
-	sample_analyze_sentiment("sad R&B")
 
 
 if __name__ == '__main__': main()
