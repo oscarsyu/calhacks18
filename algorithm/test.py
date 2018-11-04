@@ -10,7 +10,8 @@ import numpy as np
 client = language.LanguageServiceClient()
 
 # The text to analyze
-text =  u'I am feeling very very extremely sad.  I just want to cry'
+text =  u'I am feeling super duper duper happy!! Lets party'
+# u'I am feeling very very extremely sad.  I just want to cry'
 text1 = u'I am feeling super duper duper happy!! Lets party'
 document = types.Document(
     content=text,
@@ -23,7 +24,7 @@ print('Text: {}'.format(text))
 print('Sentiment: {}, {}'.format(sentiment.score, sentiment.magnitude))
 
 if (sentiment.score > 0):
-    mood_score = sentiment.score  * 1.3
+    mood_score = sentiment.score  * 1.5
 else:
     mood_score = sentiment.score  * 4
 
@@ -32,7 +33,7 @@ print(mood_score)
 with open('lm.pickle', 'rb') as fi:
     lm = pickle.load(fi)
 
-# new_labels = {"tempo": "bpm", "danceability": "dnce", "energy": "nrgy", "loudness": "dB", "liveliness": "live", "duramtion_ms"}
+# new_labels = {"tempo": "bpm", "danceability": "dnce", "energy": "nrgy", "loudness": "dB", "liveliness": "live", "valence": "val", "duration_ms": "dur", "acousticness": "acous"}
 data = pd.read_csv("test_set.csv")
 
 def prep_data(frame):
@@ -51,10 +52,10 @@ def normalize(col):
 def prep_features(tbl):
     tbl_norm = tbl
     tbl_norm["bpm"] = normalize(tbl_norm["bpm"])
-    tbl_norm["nrgy"] = normalize(tbl_norm["nrgy"])
-    tbl_norm["dnce"] = normalize(tbl_norm["dnce"])
-    tbl_norm["val"] = normalize(tbl_norm["val"])
-    tbl_norm["acous"] = normalize(tbl_norm["acous"])
+    tbl_norm["nrgy"] = normalize(tbl_norm["nrgy"]*100)
+    tbl_norm["dnce"] = normalize(tbl_norm["dnce"]*100)
+    tbl_norm["val"] = normalize(tbl_norm["val"]* 100)
+    tbl_norm["acous"] = normalize(tbl_norm["acous"] * 100)
 
     tbl_norm["dur"] = tbl_norm["dur"]/100
     return tbl_norm
