@@ -1,15 +1,15 @@
 import React from 'react';
-import { StyleSheet, Slider, View } from 'react-native';
+import { StyleSheet, TextInput, View } from 'react-native';
 import { connect } from 'react-redux';
 
 import { ENDPOINT_BASE } from './constants.js';
 import Playlist from './Playlist.js';
 
-class MoodPickerTab extends React.Component {
+class SentimentTab extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            mood: 0,
+            text: '',
             playlist: [],
         };
     }
@@ -17,16 +17,15 @@ class MoodPickerTab extends React.Component {
     render() {
         return (
             <View style={styles.container}>
-                <View style={styles.slider}>
-                    <Slider
-                        selectedValue={this.state.mood}
-                        minimumValue={-1}
-                        maximumValue={1}
-                        onSlidingComplete={(value) => {
-                            this.setState({ mood: value }, () => this.fetchPlaylist());
-                        }}
-                    />
-                </View>
+                <TextInput
+                    style={styles.text}
+                    multiline={true}
+                    numberOfLines={4}
+                    value={this.state.text}
+                    onChangeText={(text) => {
+                        this.setState({ text }, () => this.fetchPlaylist());
+                    }}
+                />
                 <Playlist styles={styles.playlist} playlist={this.state.playlist} />
             </View>
         );
@@ -39,7 +38,7 @@ class MoodPickerTab extends React.Component {
     async fetchPlaylist() {
         this.setState({ playlist: [] }); // Empty the playlist first
 
-        const response = await fetch(`${ENDPOINT_BASE}/playlist/create/mood?mood=${this.state.mood}`, {
+        const response = await fetch(`${ENDPOINT_BASE}/playlist/create/text?text=${this.state.text}`, {
             headers: {
                 'Authorization': this.props.userId,
             },
@@ -53,11 +52,9 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
-    slider: {
-        height: 48,
-        paddingRight: 16,
-        paddingLeft: 16,
-        justifyContent: 'center',
+    text: {
+        height: 96,
+        padding: 16,
         borderBottomWidth: 1,
         borderBottomColor: 'gray',
     },
@@ -76,4 +73,4 @@ const mapDispatchToProps = (dispatch) => {
     return {};
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(MoodPickerTab);
+export default connect(mapStateToProps, mapDispatchToProps)(SentimentTab);

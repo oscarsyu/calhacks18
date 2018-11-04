@@ -1,7 +1,4 @@
-import pickle
 from logging.config import dictConfig
-import pandas as pd
-import numpy as np
 from flask import Blueprint, json, Response, redirect, request, current_app
 
 from app import spotify, classifier_util
@@ -42,8 +39,15 @@ def get_all_tracks_with_features(access_token):
     return all_tracks
 
 
-@bp.route('/playlist/create')
-def playlist_create():
+def dumps_playlist(playlist):
+    return json.dumps([{
+        'id': track['id'],
+        'name': track['name'],
+    } for track in playlist])
+
+
+@bp.route('/playlist/create/mood')
+def playlist_create_mood():
     access_token = get_access_token()
     mood = float(request.args.get('mood'))
 
@@ -56,12 +60,28 @@ def playlist_create():
 
     # Classifying things
     current_app.logger.info('Classifying things')
-    playlist = classifier_util.suggest_playlist(all_tracks, mood)
+    playlist = classifier_util.suggest_playlist_from_mood(all_tracks, mood)
 
-    return json.dumps([{
-        'id': track['id'],
-        'name': track['name'],
-    } for track in playlist])
+    return dumps_playlist(playlist)
+
+
+@bp.route('/playlist/create/text')
+def playlist_create_text():
+    access_token = get_access_token()
+    text = request.args.get('text').strip()
+
+    if not access_token:
+        return '{"error":"Not authorized"}', 403
+
+    # Getting all tracks
+    current_app.logger.info('Getting all tracks & features')
+    all_tracks = get_all_tracks_with_features(access_token)
+
+    # Classifying things
+    current_app.logger.info('Classifying things')
+    playlist = classifier_util.suggest_playlist_from_text(all_tracks, text)
+
+    return dumps_playlist(playlist)
 
 
 @bp.route('/spotify/auth')

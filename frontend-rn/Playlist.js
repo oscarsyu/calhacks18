@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
         paddingLeft: 12,
         flexDirection: 'row',
         alignItems: 'center',
-        borderTopWidth: 1,
-        borderTopColor: 'lightgray',
+        borderBottomWidth: 1,
+        borderBottomColor: 'lightgray',
     },
 });

@@ -1,3 +1,10 @@
+import json
+import os
+
+from google.cloud import language
+from google.cloud.language import enums
+from google.cloud.language import types
+from google.oauth2 import service_account
 import pickle
 import pandas as pd
 import numpy as np
@@ -5,8 +12,15 @@ import numpy as np
 with open('app/lm.pickle', 'rb') as fi:
     lm = pickle.load(fi)
 
+credentials_raw = os.environ.get('GOOGLE_APPLICATION_CREDENTIALS')
 
-def suggest_playlist(all_tracks_with_features, mood):
+service_account_info = json.loads(credentials_raw)
+credentials = service_account.Credentials.from_service_account_info(service_account_info)
+
+client = language.LanguageServiceClient(credentials=credentials)
+
+
+def suggest_playlist_from_mood(all_tracks_with_features, mood):
     data = pd.DataFrame.from_dict(all_tracks_with_features)
     new_labels = {'tempo': 'bpm', 'danceability': 'dnce', 'energy': 'nrgy', 'loudness': 'dB', 'liveliness': 'live',
                   'valence': 'val', 'duration_ms': 'dur', 'acousticness': 'acous'}
@@ -57,3 +71,18 @@ def suggest_playlist(all_tracks_with_features, mood):
         return sort_by_dist[:num_songs]
 
     return find_predicted_songs(predicted, mood, 25).to_dict(orient='records')
+
+
+def suggest_playlist_from_text(all_tracks_with_features, text):
+    document = types.Document(
+        content=text,
+        type=enums.Document.Type.PLAIN_TEXT)
+
+    sentiment = client.analyze_sentiment(document=document).document_sentiment
+
+    if sentiment.score > 0:
+        mood_score = sentiment.score * 1.5
+    else:
+        mood_score = sentiment.score * 4
+
+    return suggest_playlist_from_mood(all_tracks_with_features, mood_score)
