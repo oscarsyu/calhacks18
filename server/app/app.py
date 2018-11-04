@@ -75,8 +75,7 @@ def spotify_callback():
     else:
         user_id = ''
 
-    return Response(
-        '''<script type="text/javascript">
+    return '''<script type="text/javascript">
 // Thanks to: https://www.phodal.com/blog/react-native-onmessage-couldnt-read-postmessage-issue/
 
 function awaitPostMessage() {
@@ -101,7 +100,7 @@ function awaitPostMessage() {
       }
     });
     window.postMessage.toString = function () {
-      return String(originalPostMessage);
+      return String(Object.hasOwnProperty).replace('hasOwnProperty', 'postMessage');
     };
   }
 
@@ -118,9 +117,7 @@ window.onload = function () {
     window.postMessage(USER_ID);
     document.write('The page should disappear soon :o');
 };
-</script>''' % user_id,
-        'text/html'
-    )
+</script>''' % user_id
 
 
 @bp.route('/mock/playlists/<string:mood>')
