@@ -51,7 +51,7 @@ def playlist_create():
 
     current_app.logger.info('Getting all tracks')
 
-    all_tracks = spotify.get_all_tracks(access_token, 30)
+    all_tracks = spotify.get_all_tracks(access_token, 100)
 
     current_app.logger.info('Getting features')
 
@@ -111,7 +111,7 @@ def playlist_create():
 
         return sort_by_dist[:num_songs]
 
-    playlist = find_predicted_songs(predicted, mood, 5).to_dict(orient='records')
+    playlist = find_predicted_songs(predicted, mood, 25).to_dict(orient='records')
 
     return json.dumps([{
         'id': track['id'],
