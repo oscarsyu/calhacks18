@@ -6,7 +6,6 @@ import six
 
 from thesaurus import Word
 
-import pprint
 import sys
 
 import spotipy
