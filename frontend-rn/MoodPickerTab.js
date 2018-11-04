@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Slider, View } from 'react-native';
+import { Button, StyleSheet, Slider, View } from 'react-native';
 import { connect } from 'react-redux';
 
 import { ENDPOINT_BASE } from './constants.js';
@@ -17,14 +17,19 @@ class MoodPickerTab extends React.Component {
     render() {
         return (
             <View style={styles.container}>
-                <View style={styles.slider}>
+                <View style={styles.sliderContainer}>
                     <Slider
+                        style={styles.slider}
                         selectedValue={this.state.mood}
                         minimumValue={-1}
                         maximumValue={1}
                         onSlidingComplete={(value) => {
                             this.setState({ mood: value }, () => this.fetchPlaylist());
                         }}
+                    />
+                    <Button
+                        title="Rock Spotify"
+                        onPress={() => this.rockSpotify()}
                     />
                 </View>
                 <Playlist styles={styles.playlist} playlist={this.state.playlist} />
@@ -47,20 +52,34 @@ class MoodPickerTab extends React.Component {
         const playlist = await response.json();
         this.setState({ playlist });
     }
+
+    async rockSpotify() {
+        const response = await fetch(`${ENDPOINT_BASE}/playlist/create/mood?mood=${this.state.mood}&rock=1`, {
+            headers: {
+                'Authorization': this.props.userId,
+            },
+        });
+        await response.json();
+    }
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
-    slider: {
+    sliderContainer: {
         height: 48,
         paddingRight: 16,
         paddingLeft: 16,
+        flexDirection: 'row',
         justifyContent: 'center',
+        alignItems: 'center',
         borderBottomWidth: 1,
         borderBottomColor: 'gray',
     },
+    slider: {
+        flex: 1,
+    },  
     playlist: {
         flex: 1,
     },

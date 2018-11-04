@@ -50,6 +50,7 @@ def dumps_playlist(playlist):
 def playlist_create_mood():
     access_token = get_access_token()
     mood = float(request.args.get('mood'))
+    rock = bool(request.args.get('rock', ''))
 
     if not access_token:
         return '{"error":"Not authorized"}', 403
@@ -62,6 +63,9 @@ def playlist_create_mood():
     current_app.logger.info('Classifying things')
     playlist = classifier_util.suggest_playlist_from_mood(all_tracks, mood)
 
+    if rock:
+        spotify.make_playlist(access_token, playlist, 'mood %s' % mood)
+
     return dumps_playlist(playlist)
 
 
@@ -69,6 +73,7 @@ def playlist_create_mood():
 def playlist_create_text():
     access_token = get_access_token()
     text = request.args.get('text').strip()
+    rock = bool(request.args.get('rock', ''))
 
     if not access_token:
         return '{"error":"Not authorized"}', 403
@@ -80,6 +85,9 @@ def playlist_create_text():
     # Classifying things
     current_app.logger.info('Classifying things')
     playlist = classifier_util.suggest_playlist_from_text(all_tracks, text)
+
+    if rock:
+        spotify.make_playlist(access_token, playlist, 'feel %s' % text[:10])
 
     return dumps_playlist(playlist)
 

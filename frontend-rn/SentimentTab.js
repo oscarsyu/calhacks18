@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, TextInput, View } from 'react-native';
+import { Button, StyleSheet, TextInput, View } from 'react-native';
 import { connect } from 'react-redux';
 
 import { ENDPOINT_BASE } from './constants.js';
@@ -26,6 +26,13 @@ class SentimentTab extends React.Component {
                         this.setState({ text }, () => this.fetchPlaylist());
                     }}
                 />
+                <View 
+                    style={styles.button}>
+                    <Button
+                        title="Rock Spotify"
+                        onPress={() => this.rockSpotify()}
+                    />
+                </View>
                 <Playlist styles={styles.playlist} playlist={this.state.playlist} />
             </View>
         );
@@ -46,6 +53,15 @@ class SentimentTab extends React.Component {
         const playlist = await response.json();
         this.setState({ playlist });
     }
+
+    async rockSpotify() {
+        const response = await fetch(`${ENDPOINT_BASE}/playlist/create/text?text=${this.state.text}&rock=1`, {
+            headers: {
+                'Authorization': this.props.userId,
+            },
+        });
+        await response.json();
+    }
 }
 
 const styles = StyleSheet.create({
@@ -55,6 +71,10 @@ const styles = StyleSheet.create({
     text: {
         height: 96,
         padding: 16,
+        borderBottomWidth: 1,
+        borderBottomColor: 'gray',
+    },
+    button: {
         borderBottomWidth: 1,
         borderBottomColor: 'gray',
     },

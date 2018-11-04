@@ -83,3 +83,15 @@ def get_audio_features(token, tracks):
     for item in tracks:
         result.extend(sp.audio_features(item))
     return result
+
+
+def make_playlist(token, tracks, name):
+    sp = spotipy.Spotify(auth=token)
+    info = sp.current_user()
+    current_app.logger.info(info)
+    playlist = sp.user_playlist_create(info['id'], name)
+    tracks = [t["uri"] for t in tracks]
+    tracks = [tracks[i * 100:(i + 1) * 100] for i in range((len(tracks) + 99) // 100)]
+    for item in tracks:
+        sp.user_playlist_add_tracks(info['id'], playlist["id"], item)
+    current_app.logger.info('did it')
