@@ -19,3 +19,25 @@ def mood_dict():
         "calm" : calm_synonyms
     }
     return moods
+
+def mood_checker(text):
+	"""Detects syntax in the text. """
+	moods = mood_dict()
+	client = language.LanguageServiceClient()
+	if isinstance(text, six.binary_type):
+		text = text.decode('utf-8')
+	document = types.Document(
+    	content=text,
+    	type=enums.Document.Type.PLAIN_TEXT)
+	tokens = client.analyze_syntax(document).tokens
+	tokens = [t.text.content for t in tokens] 
+	for token in tokens:
+		for mood in moods.keys():
+			if token in moods[mood]:
+				return mood;
+
+def main():
+	print(mood_checker("sad song"))
+
+
+if __name__ == '__main__': main()
