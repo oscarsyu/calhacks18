@@ -68,6 +68,9 @@ def predict_songs(tbl):
 test_norm = predict_songs(data)
 
 def find_predicted_songs(tbl, score, num_songs):
+    songs = num_songs
+    if songs > 25:
+        songs = 25
     in_range = tbl
 
     in_range["dists"] = abs(in_range["mood_predicted"] - score)
